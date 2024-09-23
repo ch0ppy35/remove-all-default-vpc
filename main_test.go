@@ -13,24 +13,34 @@ import (
 )
 
 func Test_getRegions(t *testing.T) {
-	ctx := context.TODO()
+	type args struct {
+		ctx    context.Context
+		client EC2API
+	}
 
 	tests := []struct {
 		name    string
-		client  EC2API
+		args    args
 		want    []string
 		wantErr bool
 	}{
 		{
 			name: "success - multiple regions",
-			client: &MockEC2Client{
-				describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
-					return &ec2.DescribeRegionsOutput{
-						Regions: []types.Region{
-							{RegionName: aws.String("us-east-1")},
-							{RegionName: aws.String("us-west-2")},
-						},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
+						return &ec2.DescribeRegionsOutput{
+							Regions: []types.Region{
+								{
+									RegionName: aws.String("us-east-1"),
+								},
+								{
+									RegionName: aws.String("us-west-2"),
+								},
+							},
+						}, nil
+					},
 				},
 			},
 			want:    []string{"us-east-1", "us-west-2"},
@@ -38,9 +48,12 @@ func Test_getRegions(t *testing.T) {
 		},
 		{
 			name: "error fetching regions",
-			client: &MockEC2Client{
-				describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
-					return nil, fmt.Errorf("failed to fetch regions")
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
+						return nil, fmt.Errorf("failed to fetch regions")
+					},
 				},
 			},
 			want:    nil,
@@ -48,11 +61,14 @@ func Test_getRegions(t *testing.T) {
 		},
 		{
 			name: "no regions found",
-			client: &MockEC2Client{
-				describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
-					return &ec2.DescribeRegionsOutput{
-						Regions: []types.Region{},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
+						return &ec2.DescribeRegionsOutput{
+							Regions: []types.Region{},
+						}, nil
+					},
 				},
 			},
 			want:    []string{},
@@ -62,7 +78,7 @@ func Test_getRegions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getRegions(ctx, tt.client)
+			got, err := getRegions(tt.args.ctx, tt.args.client)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getRegions() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -75,24 +91,30 @@ func Test_getRegions(t *testing.T) {
 }
 
 func Test_getDefaultVPCs(t *testing.T) {
-	ctx := context.TODO()
+	type args struct {
+		ctx    context.Context
+		client EC2API
+	}
 
 	tests := []struct {
 		name    string
-		client  EC2API
+		args    args
 		want    []string
 		wantErr bool
 	}{
 		{
 			name: "success - multiple default VPCs",
-			client: &MockEC2Client{
-				describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
-					return &ec2.DescribeVpcsOutput{
-						Vpcs: []types.Vpc{
-							{VpcId: aws.String("vpc-12345"), IsDefault: aws.Bool(true)},
-							{VpcId: aws.String("vpc-67890"), IsDefault: aws.Bool(true)},
-						},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
+						return &ec2.DescribeVpcsOutput{
+							Vpcs: []types.Vpc{
+								{VpcId: aws.String("vpc-12345"), IsDefault: aws.Bool(true)},
+								{VpcId: aws.String("vpc-67890"), IsDefault: aws.Bool(true)},
+							},
+						}, nil
+					},
 				},
 			},
 			want:    []string{"vpc-12345", "vpc-67890"},
@@ -100,9 +122,12 @@ func Test_getDefaultVPCs(t *testing.T) {
 		},
 		{
 			name: "error fetching VPCs",
-			client: &MockEC2Client{
-				describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
-					return nil, fmt.Errorf("failed to fetch VPCs")
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
+						return nil, fmt.Errorf("failed to fetch VPCs")
+					},
 				},
 			},
 			want:    nil,
@@ -110,11 +135,14 @@ func Test_getDefaultVPCs(t *testing.T) {
 		},
 		{
 			name: "no default VPCs",
-			client: &MockEC2Client{
-				describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
-					return &ec2.DescribeVpcsOutput{
-						Vpcs: []types.Vpc{},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
+						return &ec2.DescribeVpcsOutput{
+							Vpcs: []types.Vpc{},
+						}, nil
+					},
 				},
 			},
 			want:    []string{},
@@ -124,7 +152,7 @@ func Test_getDefaultVPCs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getDefaultVPCs(ctx, tt.client)
+			got, err := getDefaultVPCs(tt.args.ctx, tt.args.client)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getDefaultVPCs() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -137,66 +165,146 @@ func Test_getDefaultVPCs(t *testing.T) {
 }
 
 func Test_deleteSubnets(t *testing.T) {
-	ctx := context.TODO()
+	type args struct {
+		ctx    context.Context
+		client EC2API
+		vpcID  string
+	}
 
 	tests := []struct {
 		name    string
-		client  EC2API
-		vpcID   string
+		args    args
 		wantErr bool
 	}{
 		{
 			name: "success - delete multiple subnets",
-			client: &MockEC2Client{
-				describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
-					return &ec2.DescribeSubnetsOutput{
-						Subnets: []types.Subnet{
-							{SubnetId: aws.String("subnet-1")},
-							{SubnetId: aws.String("subnet-2")},
-						},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
+						return &ec2.DescribeSubnetsOutput{
+							Subnets: []types.Subnet{
+								{SubnetId: aws.String("subnet-1")},
+								{SubnetId: aws.String("subnet-2")},
+							},
+						}, nil
+					},
+					deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
+						return &ec2.DeleteSubnetOutput{}, nil
+					},
 				},
-				deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
-					return &ec2.DeleteSubnetOutput{}, nil
-				},
+				vpcID: "vpc-12345",
 			},
-			vpcID:   "vpc-12345",
 			wantErr: false,
 		},
 		{
 			name: "error fetching subnets",
-			client: &MockEC2Client{
-				describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
-					return nil, fmt.Errorf("failed to fetch subnets")
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
+						return nil, fmt.Errorf("failed to fetch subnets")
+					},
 				},
+				vpcID: "vpc-12345",
 			},
-			vpcID:   "vpc-12345",
 			wantErr: true,
 		},
 		{
 			name: "error deleting subnet",
-			client: &MockEC2Client{
-				describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
-					return &ec2.DescribeSubnetsOutput{
-						Subnets: []types.Subnet{
-							{SubnetId: aws.String("subnet-1")},
-						},
-					}, nil
+			args: args{
+				ctx: context.TODO(),
+				client: &MockEC2Client{
+					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
+						return &ec2.DescribeSubnetsOutput{
+							Subnets: []types.Subnet{
+								{SubnetId: aws.String("subnet-1")},
+							},
+						}, nil
+					},
+					deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
+						return nil, fmt.Errorf("failed to delete subnet subnet-1")
+					},
 				},
-				deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
-					return nil, fmt.Errorf("failed to delete subnet subnet-1")
-				},
+				vpcID: "vpc-12345",
 			},
-			vpcID:   "vpc-12345",
 			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := deleteSubnets(ctx, tt.client, tt.vpcID)
+			err := deleteSubnets(tt.args.ctx, tt.args.client, tt.args.vpcID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("deleteSubnets() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_isMainRouteTable(t *testing.T) {
+	type args struct {
+		rt types.RouteTable
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "main route table",
+			args: args{
+				rt: types.RouteTable{
+					Associations: []types.RouteTableAssociation{
+						{
+							Main: aws.Bool(true),
+						},
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "non-main route table",
+			args: args{
+				rt: types.RouteTable{
+					Associations: []types.RouteTableAssociation{
+						{
+							Main: aws.Bool(false),
+						},
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "empty associations",
+			args: args{
+				rt: types.RouteTable{
+					Associations: []types.RouteTableAssociation{},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "nil main association",
+			args: args{
+				rt: types.RouteTable{
+					Associations: []types.RouteTableAssociation{
+						{
+							Main: nil,
+						},
+					},
+				},
+			},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isMainRouteTable(tt.args.rt); got != tt.want {
+				t.Errorf("isMainRouteTable() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -352,8 +460,12 @@ func Test_deleteInternetGateways(t *testing.T) {
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return &ec2.DescribeInternetGatewaysOutput{
 							InternetGateways: []types.InternetGateway{
-								{InternetGatewayId: aws.String("igw-12345")},
-								{InternetGatewayId: aws.String("igw-67890")},
+								{
+									InternetGatewayId: aws.String("igw-12345"),
+								},
+								{
+									InternetGatewayId: aws.String("igw-67890"),
+								},
 							},
 						}, nil
 					},
@@ -833,8 +945,12 @@ func Test_cleanupVPCResources(t *testing.T) {
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
 							RouteTables: []types.RouteTable{
-								{RouteTableId: aws.String("rtb-1")},
-								{RouteTableId: aws.String("rtb-2")},
+								{
+									RouteTableId: aws.String("rtb-1"),
+								},
+								{
+									RouteTableId: aws.String("rtb-2"),
+								},
 							},
 						}, nil
 					},
@@ -937,8 +1053,12 @@ func Test_cleanupVPCResources(t *testing.T) {
 					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
 						return &ec2.DescribeSubnetsOutput{
 							Subnets: []types.Subnet{
-								{SubnetId: aws.String("subnet-1")},
-								{SubnetId: aws.String("subnet-2")},
+								{
+									SubnetId: aws.String("subnet-1"),
+								},
+								{
+									SubnetId: aws.String("subnet-2"),
+								},
 							},
 						}, nil
 					},
@@ -976,8 +1096,12 @@ func Test_cleanupVPCResources(t *testing.T) {
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
 							RouteTables: []types.RouteTable{
-								{RouteTableId: aws.String("rtb-1")},
-								{RouteTableId: aws.String("rtb-2")},
+								{
+									RouteTableId: aws.String("rtb-1"),
+								},
+								{
+									RouteTableId: aws.String("rtb-2"),
+								},
 							},
 						}, nil
 					},
@@ -989,6 +1113,184 @@ func Test_cleanupVPCResources(t *testing.T) {
 								},
 								{
 									SubnetId: aws.String("subnet-2"),
+								},
+							},
+						}, nil
+					},
+					detachInternetGatewayFunc: func(ctx context.Context, input *ec2.DetachInternetGatewayInput, optFns ...func(*ec2.Options)) (*ec2.DetachInternetGatewayOutput, error) {
+						return &ec2.DetachInternetGatewayOutput{}, nil
+					},
+				},
+				vpcID: "vpc-12345",
+			},
+			wantErr: true,
+		},
+		{
+			name: "Error deleting network ACLs",
+			args: args{
+				ctx: context.Background(),
+				client: &MockEC2Client{
+					deleteInternetGatewayFunc: func(ctx context.Context, input *ec2.DeleteInternetGatewayInput, optFns ...func(*ec2.Options)) (*ec2.DeleteInternetGatewayOutput, error) {
+						return &ec2.DeleteInternetGatewayOutput{}, nil
+					},
+					deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
+						return &ec2.DeleteSubnetOutput{}, nil
+					},
+					deleteRouteTableFunc: func(ctx context.Context, input *ec2.DeleteRouteTableInput, optFns ...func(*ec2.Options)) (*ec2.DeleteRouteTableOutput, error) {
+						return &ec2.DeleteRouteTableOutput{}, nil
+					},
+					deleteSecurityGroupFunc: func(ctx context.Context, input *ec2.DeleteSecurityGroupInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSecurityGroupOutput, error) {
+						return &ec2.DeleteSecurityGroupOutput{}, nil
+					},
+					deleteNetworkAclFunc: func(ctx context.Context, input *ec2.DeleteNetworkAclInput, optFns ...func(*ec2.Options)) (*ec2.DeleteNetworkAclOutput, error) {
+						return nil, fmt.Errorf("failed to delete network ACL")
+					},
+					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
+						return &ec2.DescribeInternetGatewaysOutput{
+							InternetGateways: []types.InternetGateway{
+								{
+									InternetGatewayId: aws.String("igw-12345"),
+								},
+							},
+						}, nil
+					},
+					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
+						return &ec2.DescribeSubnetsOutput{
+							Subnets: []types.Subnet{
+								{
+									SubnetId: aws.String("subnet-1"),
+								},
+								{
+									SubnetId: aws.String("subnet-2"),
+								},
+							},
+						}, nil
+					},
+					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
+						return &ec2.DescribeRouteTablesOutput{
+							RouteTables: []types.RouteTable{
+								{
+									RouteTableId: aws.String("rtb-1"),
+								},
+								{
+									RouteTableId: aws.String("rtb-2"),
+								},
+							},
+						}, nil
+					},
+					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
+						return &ec2.DescribeSecurityGroupsOutput{
+							SecurityGroups: []types.SecurityGroup{
+								{
+									GroupId:   aws.String("sg-12345"),
+									GroupName: aws.String("test-group-0"),
+								},
+								{
+									GroupId:   aws.String("sg-67890"),
+									GroupName: aws.String("test-group-1"),
+								},
+							},
+						}, nil
+					},
+					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
+						return &ec2.DescribeNetworkAclsOutput{
+							NetworkAcls: []types.NetworkAcl{
+								{
+									IsDefault:    aws.Bool(false),
+									NetworkAclId: aws.String("acl-12345"),
+								},
+								{
+									IsDefault:    aws.Bool(false),
+									NetworkAclId: aws.String("acl-67890"),
+								},
+							},
+						}, nil
+					},
+					detachInternetGatewayFunc: func(ctx context.Context, input *ec2.DetachInternetGatewayInput, optFns ...func(*ec2.Options)) (*ec2.DetachInternetGatewayOutput, error) {
+						return &ec2.DetachInternetGatewayOutput{}, nil
+					},
+				},
+				vpcID: "vpc-12345",
+			},
+			wantErr: true,
+		},
+		{
+			name: "Error deleting security groups",
+			args: args{
+				ctx: context.Background(),
+				client: &MockEC2Client{
+					deleteInternetGatewayFunc: func(ctx context.Context, input *ec2.DeleteInternetGatewayInput, optFns ...func(*ec2.Options)) (*ec2.DeleteInternetGatewayOutput, error) {
+						return &ec2.DeleteInternetGatewayOutput{}, nil
+					},
+					deleteSubnetFunc: func(ctx context.Context, input *ec2.DeleteSubnetInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSubnetOutput, error) {
+						return &ec2.DeleteSubnetOutput{}, nil
+					},
+					deleteRouteTableFunc: func(ctx context.Context, input *ec2.DeleteRouteTableInput, optFns ...func(*ec2.Options)) (*ec2.DeleteRouteTableOutput, error) {
+						return &ec2.DeleteRouteTableOutput{}, nil
+					},
+					deleteSecurityGroupFunc: func(ctx context.Context, input *ec2.DeleteSecurityGroupInput, optFns ...func(*ec2.Options)) (*ec2.DeleteSecurityGroupOutput, error) {
+						return nil, fmt.Errorf("failed to delete security group")
+					},
+					deleteNetworkAclFunc: func(ctx context.Context, input *ec2.DeleteNetworkAclInput, optFns ...func(*ec2.Options)) (*ec2.DeleteNetworkAclOutput, error) {
+						return &ec2.DeleteNetworkAclOutput{}, nil
+					},
+					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
+						return &ec2.DescribeInternetGatewaysOutput{
+							InternetGateways: []types.InternetGateway{
+								{
+									InternetGatewayId: aws.String("igw-12345"),
+								},
+							},
+						}, nil
+					},
+					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
+						return &ec2.DescribeSubnetsOutput{
+							Subnets: []types.Subnet{
+								{
+									SubnetId: aws.String("subnet-1"),
+								},
+								{
+									SubnetId: aws.String("subnet-2"),
+								},
+							},
+						}, nil
+					},
+					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
+						return &ec2.DescribeRouteTablesOutput{
+							RouteTables: []types.RouteTable{
+								{
+									RouteTableId: aws.String("rtb-1"),
+								},
+								{
+									RouteTableId: aws.String("rtb-2"),
+								},
+							},
+						}, nil
+					},
+					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
+						return &ec2.DescribeSecurityGroupsOutput{
+							SecurityGroups: []types.SecurityGroup{
+								{
+									GroupId:   aws.String("sg-12345"),
+									GroupName: aws.String("test-group-0"),
+								},
+								{
+									GroupId:   aws.String("sg-67890"),
+									GroupName: aws.String("test-group-1"),
+								},
+							},
+						}, nil
+					},
+					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
+						return &ec2.DescribeNetworkAclsOutput{
+							NetworkAcls: []types.NetworkAcl{
+								{
+									IsDefault:    aws.Bool(false),
+									NetworkAclId: aws.String("acl-12345"),
+								},
+								{
+									IsDefault:    aws.Bool(false),
+									NetworkAclId: aws.String("acl-67890"),
 								},
 							},
 						}, nil
