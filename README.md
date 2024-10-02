@@ -6,6 +6,8 @@ Inspired by [davidobrien1985/delete-aws-default-vpc](https://github.com/davidobr
 
 ## Use
 
+### Locally
+
 Make sure you're auth'd into aws where you're running this
 
 ```bash
@@ -14,3 +16,7 @@ make
 # Run it
 bin/remove-all-default-vpc
 ```
+
+### Kubernetes
+
+See [Kubernetes](kubernetes/)

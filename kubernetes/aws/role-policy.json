@@ -1,0 +1,26 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "RemoveAllDefaultVpcs",
+        "Effect": "Allow",
+        "Action": [
+          "ec2:DescribeRegions",
+          "ec2:DescribeVpcs",
+          "ec2:DeleteVpc",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DeleteSecurityGroup",
+          "ec2:DescribeSubnets",
+          "ec2:DeleteSubnet",
+          "ec2:DescribeRouteTables",
+          "ec2:DeleteRouteTable",
+          "ec2:DescribeInternetGateways",
+          "ec2:DetachInternetGateway",
+          "ec2:DeleteInternetGateway",
+          "ec2:DescribeNetworkAcls",
+          "ec2:DeleteNetworkAcl"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
