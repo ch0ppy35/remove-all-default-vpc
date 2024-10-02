@@ -13,17 +13,17 @@ import (
 )
 
 func getRegions(ctx context.Context, client EC2API) ([]string, error) {
-	output, err := client.DescribeRegions(ctx, &ec2.DescribeRegionsInput{})
+	resp, err := client.DescribeRegions(ctx, &ec2.DescribeRegionsInput{})
 	if err != nil {
 		return nil, err
 	}
 
-	if len(output.Regions) == 0 {
+	if len(resp.Regions) == 0 {
 		return []string{}, nil
 	}
 
 	regions := []string{}
-	for _, region := range output.Regions {
+	for _, region := range resp.Regions {
 		regions = append(regions, *region.RegionName)
 	}
 
@@ -31,17 +31,17 @@ func getRegions(ctx context.Context, client EC2API) ([]string, error) {
 }
 
 func getDefaultVPCs(ctx context.Context, client EC2API) ([]string, error) {
-	output, err := client.DescribeVpcs(ctx, &ec2.DescribeVpcsInput{})
+	resp, err := client.DescribeVpcs(ctx, &ec2.DescribeVpcsInput{})
 	if err != nil {
 		return nil, err
 	}
 
-	if len(output.Vpcs) == 0 {
+	if len(resp.Vpcs) == 0 {
 		return []string{}, nil
 	}
 
 	vpcs := []string{}
-	for _, vpc := range output.Vpcs {
+	for _, vpc := range resp.Vpcs {
 		if *vpc.IsDefault {
 			vpcs = append(vpcs, *vpc.VpcId)
 		}
@@ -260,7 +260,6 @@ func DeleteAllDefaultVPCs(ctx context.Context, regions []string, cfg aws.Config)
 			fmt.Printf("Processing region: %s\n", region)
 			regionCfg := cfg.Copy()
 			regionCfg.Region = region
-
 			ec2Client := &EC2Client{Client: ec2.NewFromConfig(regionCfg)}
 
 			vpcs, err := getDefaultVPCs(ctx, ec2Client)
@@ -291,7 +290,7 @@ func DeleteAllDefaultVPCs(ctx context.Context, regions []string, cfg aws.Config)
 }
 
 func main() {
-	ctx := context.TODO()
+	ctx := context.Background()
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		fmt.Printf("Unable to load AWS SDK config: %v", err)

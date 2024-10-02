@@ -27,7 +27,7 @@ func Test_getRegions(t *testing.T) {
 		{
 			name: "success - multiple regions",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
 						return &ec2.DescribeRegionsOutput{
@@ -49,7 +49,7 @@ func Test_getRegions(t *testing.T) {
 		{
 			name: "error fetching regions",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
 						return nil, fmt.Errorf("failed to fetch regions")
@@ -62,7 +62,7 @@ func Test_getRegions(t *testing.T) {
 		{
 			name: "no regions found",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRegionsFunc: func(ctx context.Context, input *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error) {
 						return &ec2.DescribeRegionsOutput{
@@ -105,7 +105,7 @@ func Test_getDefaultVPCs(t *testing.T) {
 		{
 			name: "success - multiple default VPCs",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
 						return &ec2.DescribeVpcsOutput{
@@ -123,7 +123,7 @@ func Test_getDefaultVPCs(t *testing.T) {
 		{
 			name: "error fetching VPCs",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
 						return nil, fmt.Errorf("failed to fetch VPCs")
@@ -136,7 +136,7 @@ func Test_getDefaultVPCs(t *testing.T) {
 		{
 			name: "no default VPCs",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeVpcsFunc: func(ctx context.Context, input *ec2.DescribeVpcsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error) {
 						return &ec2.DescribeVpcsOutput{
@@ -179,7 +179,7 @@ func Test_deleteSubnets(t *testing.T) {
 		{
 			name: "success - delete multiple subnets",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
 						return &ec2.DescribeSubnetsOutput{
@@ -200,7 +200,7 @@ func Test_deleteSubnets(t *testing.T) {
 		{
 			name: "error fetching subnets",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
 						return nil, fmt.Errorf("failed to fetch subnets")
@@ -213,7 +213,7 @@ func Test_deleteSubnets(t *testing.T) {
 		{
 			name: "error deleting subnet",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSubnetsFunc: func(ctx context.Context, input *ec2.DescribeSubnetsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSubnetsOutput, error) {
 						return &ec2.DescribeSubnetsOutput{
@@ -325,7 +325,7 @@ func Test_deleteRouteTables(t *testing.T) {
 		{
 			name: "success - delete multiple route tables",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
@@ -346,7 +346,7 @@ func Test_deleteRouteTables(t *testing.T) {
 		{
 			name: "error describing route tables",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return nil, fmt.Errorf("failed to describe route tables")
@@ -359,7 +359,7 @@ func Test_deleteRouteTables(t *testing.T) {
 		{
 			name: "error deleting route table",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
@@ -379,7 +379,7 @@ func Test_deleteRouteTables(t *testing.T) {
 		{
 			name: "no route tables found",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
@@ -394,7 +394,7 @@ func Test_deleteRouteTables(t *testing.T) {
 		{
 			name: "success - skip main route table",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeRouteTablesFunc: func(ctx context.Context, input *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 						return &ec2.DescribeRouteTablesOutput{
@@ -455,7 +455,7 @@ func Test_deleteInternetGateways(t *testing.T) {
 		{
 			name: "success - multiple internet gateways",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return &ec2.DescribeInternetGatewaysOutput{
@@ -483,7 +483,7 @@ func Test_deleteInternetGateways(t *testing.T) {
 		{
 			name: "error detaching internet gateway",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return &ec2.DescribeInternetGatewaysOutput{
@@ -503,7 +503,7 @@ func Test_deleteInternetGateways(t *testing.T) {
 		{
 			name: "error deleting internet gateway",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return &ec2.DescribeInternetGatewaysOutput{
@@ -526,7 +526,7 @@ func Test_deleteInternetGateways(t *testing.T) {
 		{
 			name: "no internet gateways found",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return &ec2.DescribeInternetGatewaysOutput{
@@ -541,7 +541,7 @@ func Test_deleteInternetGateways(t *testing.T) {
 		{
 			name: "error describing internet gateways",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeInternetGatewaysFunc: func(ctx context.Context, input *ec2.DescribeInternetGatewaysInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInternetGatewaysOutput, error) {
 						return nil, fmt.Errorf("failed to describe internet gateways")
@@ -576,7 +576,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "Successfully delete a security group",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return &ec2.DescribeSecurityGroupsOutput{
@@ -599,7 +599,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "Successfully delete multiple security groups",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return &ec2.DescribeSecurityGroupsOutput{
@@ -630,7 +630,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "Skip Default Security Group",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return &ec2.DescribeSecurityGroupsOutput{
@@ -654,7 +654,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "No Security Groups to Delete",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return &ec2.DescribeSecurityGroupsOutput{
@@ -669,7 +669,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "Error in DescribeSecurityGroups",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return nil, errors.New("describe security groups failed")
@@ -682,7 +682,7 @@ func Test_deleteSecurityGroups(t *testing.T) {
 		{
 			name: "Error in DeleteSecurityGroup",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeSecurityGroupsFunc: func(ctx context.Context, input *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 						return &ec2.DescribeSecurityGroupsOutput{
@@ -727,7 +727,7 @@ func Test_deleteNetworkACLs(t *testing.T) {
 		{
 			name: "Successfully delete non-default network ACLs",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
 						return &ec2.DescribeNetworkAclsOutput{
@@ -750,7 +750,7 @@ func Test_deleteNetworkACLs(t *testing.T) {
 		{
 			name: "Successfully skip default network ACL",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
 						return &ec2.DescribeNetworkAclsOutput{
@@ -770,7 +770,7 @@ func Test_deleteNetworkACLs(t *testing.T) {
 		{
 			name: "Error describing network ACLs",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
 						return nil, fmt.Errorf("failed to describe network ACLs")
@@ -783,7 +783,7 @@ func Test_deleteNetworkACLs(t *testing.T) {
 		{
 			name: "Error deleting a network ACL",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
 						return &ec2.DescribeNetworkAclsOutput{
@@ -806,7 +806,7 @@ func Test_deleteNetworkACLs(t *testing.T) {
 		{
 			name: "No network ACLs found",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					describeNetworkAclsFunc: func(ctx context.Context, input *ec2.DescribeNetworkAclsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeNetworkAclsOutput, error) {
 						return &ec2.DescribeNetworkAclsOutput{
@@ -844,7 +844,7 @@ func Test_deleteVPC(t *testing.T) {
 		{
 			name: "Successfully delete VPC",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					deleteVpcFunc: func(ctx context.Context, input *ec2.DeleteVpcInput, optFns ...func(*ec2.Options)) (*ec2.DeleteVpcOutput, error) {
 						return &ec2.DeleteVpcOutput{}, nil
@@ -857,7 +857,7 @@ func Test_deleteVPC(t *testing.T) {
 		{
 			name: "Error deleting VPC",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					deleteVpcFunc: func(ctx context.Context, input *ec2.DeleteVpcInput, optFns ...func(*ec2.Options)) (*ec2.DeleteVpcOutput, error) {
 						return nil, fmt.Errorf("failed to delete VPC")
@@ -870,7 +870,7 @@ func Test_deleteVPC(t *testing.T) {
 		{
 			name: "Delete non-existent VPC",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					deleteVpcFunc: func(ctx context.Context, input *ec2.DeleteVpcInput, optFns ...func(*ec2.Options)) (*ec2.DeleteVpcOutput, error) {
 						return nil, fmt.Errorf("VPC not found")
@@ -883,7 +883,7 @@ func Test_deleteVPC(t *testing.T) {
 		{
 			name: "Error deleting due to dependency",
 			args: args{
-				ctx: context.TODO(),
+				ctx: context.Background(),
 				client: &MockEC2Client{
 					deleteVpcFunc: func(ctx context.Context, input *ec2.DeleteVpcInput, optFns ...func(*ec2.Options)) (*ec2.DeleteVpcOutput, error) {
 						return nil, fmt.Errorf("DependencyViolation: VPC has dependent resources")
